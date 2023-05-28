@@ -1,0 +1,12 @@
+- name: Generate MD5 of {{item.image_name}}
+  nxos_command:
+    commands: 'show file bootflash:///{{item.image_name}} md5sum'
+  register: md5_device
+
+- name: 'Compare MD5 value of {{item.image_name}}'
+  set_fact:
+    verify_md5: "{{item.image_md5 | check_nexus_md5(md5_device)}}"
+
+- name: Display MD5 check result
+  debug:
+    msg: "MD5 value match {{verify_md5}}"

@@ -1,0 +1,8 @@
+- name: "Check all .bin files"
+  ios_command:
+    commands: "dir | in bin"
+  register: unused_images
+
+- name: Listing all the uploaded images on {{inventory_hostname}}
+  set_fact:
+    all_images: "{{ unused_images.stdout_lines[0] | find_uploaded_images}}"

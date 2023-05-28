@@ -1,0 +1,27 @@
+- name: Set source path of software image
+  set_fact:
+    staging_folder: '/path'
+
+- name: Taking Nexus5k copy image process playbook
+  block: 
+    - name: Check image and space on the n5k device
+      include_tasks: tasks/nxos/nuggets/nexus_check_space.yml
+
+    - name: Nexus5k, checking nxos and kickstart image
+      include_tasks: tasks/nxos/nuggets/nexus_loop.yml
+      loop:
+        - { image_name: "{{ios_image}}", image_md5: "{{ios_md5}}"}
+        - { image_name: "{{ios_kick_start_image}}", image_md5: "{{ios_kick_start_md5}}"}
+  when: nexus_series == 'n5k'
+
+
+- name: Taking Nexus9k copy image process playbook
+  block: 
+    - name: Check image and space on the n9k device
+      include_tasks: tasks/nxos/nuggets/nexus_check_space.yml
+
+    - name: Nexus9k, checking nxos image
+      include_tasks: tasks/nxos/nuggets/nexus_loop.yml
+      loop:
+        - { image_name: "{{ios_image}}", image_md5: "{{ios_md5}}"}
+  when: nexus_series == 'n9k'

@@ -1,0 +1,16 @@
+- debug:
+    msg: "Copying {{item.image_name}} image to {{inventory_hostname}}, please wait"
+
+- name: Enable scp-server on Nexus Device
+  include_tasks: tasks/nxos/nuggets/enable_scp-server.yml
+
+- name: Image transfer status
+  include_tasks: tasks/common/copy_image.yml
+
+- name: 'Verify MD5 value of {{item.image_name}}'
+  include_tasks: tasks/nxos/nuggets/nexus_md5_check.yml
+
+- name: Fail if MD5 value doesn't match
+  fail:
+    msg: "MD5 doesn't match"
+  when: verify_md5 == 'Failed'

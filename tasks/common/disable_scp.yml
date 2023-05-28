@@ -1,0 +1,8 @@
+- name: Set command and copy
+  ios_config:
+    lines:
+      - no ip tcp window-size 65536
+      - no ip tcp path-mtu-discovery
+      - no ip ssh window-size 65536
+      - no ip scp server enable
+    save_when: always

@@ -1,0 +1,16 @@
+- name: Validate the current image on {{inventory_hostname}}
+  include_tasks: tasks/ios/cisco_ios_check_currentboot.yml
+
+- name: Block for image upload and MD5
+  block:
+    - name: Check all software images on {{inventory_hostname}}
+      include_tasks: tasks/ios/cisco_ios_check_images.yml
+
+    - name: Upload software image on {{inventory_hostname}}
+      include_tasks: tasks/common/copy_image_ios.yml
+      when: ios_image not in all_images
+
+    - name: Validate if MD5 value of image matches on {{inventory_hostname}}
+      include_tasks: tasks/common/ios_md5_check.yml
+      when: ios_image in all_images 
+  when: ios_image != current_image

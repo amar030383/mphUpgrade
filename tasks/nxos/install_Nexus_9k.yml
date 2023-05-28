@@ -1,0 +1,51 @@
+- debug:
+    msg: 'Running show install all impact nxos bootflash:{{ios_file}}, please wait for it to finish'
+
+- name: Impact analysis completed
+  include_tasks: tasks/nxos/nuggets/show_impact_nexus_9k.yml
+
+- name: Block for install OS on N9k
+  block:
+    - name: Pre install validation check
+      include_tasks: tasks/nxos/nuggets/nexus_pre_post_check.yml #add this
+      vars:
+        log_type: pre
+
+    - name: Check vPC config
+      include_tasks: tasks/nxos/nuggets/nexus_vpc_check.yml #add this
+
+    - debug: 
+        msg: "{{ios_file}} installation started on {{inventory_hostname}}, please wait for the installation to completed"
+
+    - name: "{{ios_file}} installation completed"
+      nxos_install_os:
+        system_image_file: "{{ios_file}}"
+      register: output
+    
+    - debug:
+        msg: "{{output}}"
+
+    - debug: 
+        msg: "{{inventory_hostname}} is rebooting, it may take up to 5 minutes, please wait"
+
+    - name: Wait for the device to come up
+      include_tasks: tasks/nxos/nuggets/wait.yml # add this
+
+    - name: reset the connection
+      meta: reset_connection
+
+    - name: wait for the device to settle down
+      include_tasks: tasks/nxos/nuggets/extra_wait.yml # add this
+
+    - name: Confirm if the new image is showing up in the show version
+      include_tasks: tasks/nxos/nuggets/nexus_check_current_boot.yml #add this
+
+    - name: Post install validation check
+      include_tasks: tasks/nxos/nuggets/nexus_pre_post_check.yml #add this
+      vars:
+        log_type: post
+
+    - name: Compare the pre and post config
+      include_tasks: tasks/nxos/nuggets/nexus_pre_post_compare.yml #add this
+
+  when: nexus_verify_install[0].nxos == 'yes'

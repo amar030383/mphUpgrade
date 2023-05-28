@@ -1,0 +1,22 @@
+- name: 'Copying {{item.image_name}} file to {{inventory_hostname}}'
+  delegate_to: "{{server}}"
+  vars:
+    ansible_command_timeout: 600
+    ansible_connect_timeout: 600
+    # ansible_python_interpreter: /aoos/pythonpat/venv/pexpect/bin/python
+    ansible_python_interpreter: /home/amar/upgrade
+    scp_cmd: "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+    scp_src: '{{staging_folder}}{{item.image_name}}'
+    scp_dest: '{{ansible_user}}@{{ansible_host}}'
+  expect:
+    command: "{{scp_cmd}} {{scp_src}} {{scp_dest}}:/{{item.image_name}}"
+    reponses:
+      (?i)pass(word|code): "{{ansible_pass}}"
+    timeout: 7200
+  async: 7200
+  poll: 30
+  resigter: output
+
+- debug:
+    msg: "{{output}}"
+  

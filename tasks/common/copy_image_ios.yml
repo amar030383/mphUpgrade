@@ -1,0 +1,13 @@
+- name: Find out playbook's path
+  shell: pwd
+  register: playbook_path_output
+- debug: var=playbook_path_output.stdout
+
+
+- name: Change window size
+  include_tasks: tasks/common/enable_scp.yml
+
+- name: Send image to network device
+  net_put:
+    src: '/root/automation/ansibleUpgrade/{{ios_image}}'
+    dest: "{{ios_image}}"

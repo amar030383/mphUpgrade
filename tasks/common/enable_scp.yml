@@ -1,0 +1,20 @@
+- name: Set command and copy
+  ios_config:
+    lines:
+      - ip tcp window-size 65536
+      - ip tcp path-mtu-discovery
+      - ip ssh window-size 65536
+      - ip scp server enable
+    save_when: always
+
+# - name: Set Window Size
+#   ios_config:
+#     lines:
+#       - ip ssh window-size 65536
+#     save_when: always
+
+# - name: Enable SCP 
+#   ios_config:
+#     lines:
+#       - ip scp server enable
+#     save_when: always

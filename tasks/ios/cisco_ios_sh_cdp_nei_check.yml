@@ -1,0 +1,10 @@
+- name: "{{log_type}}: Get sh_cdp_nei_check"
+  ios_command:
+    commands: show cdp nei
+  register: cmd
+  ignore_errors: True
+
+- name: "{{log_type}}: filtering sh_cdp_nei_check"
+  set_fact:
+    fil_sh_cdp_nei_check_{{log_type}}: "{{cmd | filter_sh_cdp_nei_check}}"
+  when: cmd.failed != true and cmd.stdout_lines[] is defined

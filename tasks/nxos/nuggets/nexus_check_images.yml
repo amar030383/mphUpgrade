@@ -1,0 +1,13 @@
+- name: Check if image is available on the device
+  block:
+    - name: Execute command dir | in .bin
+      ios_command:
+        commands:
+          - "dir | in .bin"
+      register: show_images
+    
+    - set_fact:
+        image_available: "{{item.image_name | find_all_images(show_images)}}"
+    
+    - debug: 
+        msg: "{{image_available}}"

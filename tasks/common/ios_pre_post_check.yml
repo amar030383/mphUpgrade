@@ -1,0 +1,12 @@
+- name: show_ip_int_bri
+  include_tasks: tasks/ios/cisco_ios_sh_ip_int_bri_check.yml
+
+- name: show_int_desc
+  include_tasks: tasks/ios/cisco_ios_sh_int_desc_check.yml
+
+# - name: show ip int bri
+#   include_tasks: tasks/ios/cisco_ios_sh_cdp_nei_check.yml
+
+# - name: show ip int bri
+#   include_tasks: tasks/ios/cisco_ios_sh_ver_check.yml
+

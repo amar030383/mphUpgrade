@@ -1,0 +1,8 @@
+- name: "Check current boot image"
+  ios_command:
+    commands: "show boot"
+  register: cmd_var
+  ignore_errors: True
+
+- set_fact:
+    currentBoot: "{{ cmd_var.stdout_lines[0] | find_current_boot}}"

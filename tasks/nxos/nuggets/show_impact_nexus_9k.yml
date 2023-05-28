@@ -1,0 +1,7 @@
+- name: Check show install all impact on Nexus9k
+  nxos_command:
+    commands: 'show install all impact nxos bootflash:{{ios_file}}'
+  register: show_install_all_impact
+
+- set_fact:
+  nexus_verify_install: "{{show_install_all_impact | check_nexus_install(nexus_series)}}"

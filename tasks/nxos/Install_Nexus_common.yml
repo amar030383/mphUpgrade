@@ -1,0 +1,14 @@
+- set_fact:
+    boot_status: "{{ansible_facts.net_image}} | check_nxos_current(ios_file)}}"
+  
+- debug:
+    msg: "{{inventory_hostname}} is running on {{ansible_facts.net_image}}, required image is {{ios_file}}"
+
+- name: 'Fail the playbook if the device is already running on {{ios_file}}'
+  fail:
+    msg: "{{ios_file}} is already running on {{inventory_hostname}} hence failing the playbook"
+  when: boot_status == 'Same'
+
+- name: Running Nexus Upgrade, model N9k
+  include_tasks: tasks/nxos/install_Nexus_9k.yml
+  

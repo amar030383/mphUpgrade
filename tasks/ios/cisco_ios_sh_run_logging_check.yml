@@ -1,0 +1,14 @@
+- name: "{{log_type}}: Get cisco_ios_sh_run_tacacs_check"
+  ios_command:
+    commands:
+      - show run | sec tacacs
+  register: cmd_var
+  ignore_errors: True
+
+- set_fact:
+    output: "{{cmd_var.stdout_lines | to_yaml}}"
+
+- name: "{{log_type}}: filtering cisco_ios_sh_run_tacacs_check output"
+  set_fact: 
+    fil_cisco_ios_sh_run_tacacs_check_{{log_type}}: "{{output | filter_sh_run_tacacs}}"
+  when: cmd_var.failed != true

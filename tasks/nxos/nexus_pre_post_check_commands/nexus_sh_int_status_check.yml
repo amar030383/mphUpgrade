@@ -1,0 +1,10 @@
+- name: "{{log_type}}: Get nexus_sh_int_status_check"
+  ios_command:
+    commands: show interface status up | json
+  register: cmd_var
+  ignore_errors: True
+
+- name: "{{log_type}}: filtering nexus_sh_int_status_check output"
+  set_fact:
+    fil_sh_int_status_{{log_type}}: "{{cmd_var | filter_nxos_sh_int_status}}" 
+  when: cmd_var.failed !=true

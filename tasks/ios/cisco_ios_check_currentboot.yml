@@ -1,0 +1,18 @@
+- name: "Check current boot"
+  ios_command:
+    commands: "show boot | in .bin"
+  register: currentBoot
+  ignore_errors: True
+
+- name: Setting current image name
+  set_fact:
+    current_image: "{{ currentBoot.stdout | find_cisco_ios_sh_boot}}"
+
+- name: 'Current boot image on {{inventory_hostname}}'
+  debug: 
+    msg: "{{ current_image}}"
+
+- name: Check if current boot image and new boot image
+  fail:
+    msg: "Current boot image and new image are same"
+  when: ios_image == current_image

@@ -1,0 +1,12 @@
+- name: Gather default facts
+  ios_facts:
+    gather_subset:
+      - all
+      
+- name: Saving Device Model
+  set_fact:
+    device: "{{ ansible_facts.net_model | lower }}"
+
+- name: Checking Device Type
+  set_fact:
+    device_model: "{{device | device_model }}"

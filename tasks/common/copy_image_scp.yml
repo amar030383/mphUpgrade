@@ -1,0 +1,38 @@
+- name: Check if the image is available on the TFTP server
+  find:
+    paths: /tftp/ios/
+    patterns: "{{ios_image}}"
+  register: data
+  delegate_to: '3.19.131.3'
+
+- name: Fail if the image is not available on TFTP Server
+  fail:
+    msg: Check {{ios_image}} is available on on TFTP server
+  when: "data.matched != 1"
+
+- name: Block if image is available 
+  block:
+    - set_fact:
+        scp_cmd: "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+
+    - set_fact: 
+        sendimage: "{{scp_cmd}} /tftp/ios/{{ios_image}} {{ansible_ssh_user}}@{{inventory_hostname}}:/{{ios_image}}"
+
+    - debug:
+        msg: "{{sendimage}}"
+        
+    - name: Set Window size
+      include_tasks: tasks/common/enable_scp.yml
+
+    - name: Copying image to the device
+      expect:
+        command: "{{sendimage}}"
+        responses:
+          (?i)pass(word|code): "{{ansible_ssh_pass}}"
+        timeout: 7200
+      async: 7200
+      poll: 30
+      register: output
+      delegate_to: '3.19.131.3'
+
+  when: "data.matched == 1"

@@ -1,0 +1,13 @@
+- name: Confirm N9k has enough free memory
+  assert:
+    that: "{{ansible_net_memfree_mb}}> {{ios_size/1000/1000}}"
+    fail_msg: "Fail - Not enough free space available"
+    success_msg: "Pass - Enough space available"
+  when: nexus_series =='n9k'
+
+- name: Confirm N5k has enough free memory
+  assert:
+    that: "{{ansible_net_memfree_mb}} > {{ios_size/1000/1000 + ios_kick_start_size/1000/1000}}"
+    fail_msg: "Fail - Not enough free space available"
+    success_msg: "Pass - Enough space available"
+  when: nexus_series =='n5k'

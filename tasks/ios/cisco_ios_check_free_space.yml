@@ -1,0 +1,13 @@
+- name: Saving Bootflash information
+  set_fact:
+    bootflash: "{{ansible_facts.net_filesystems_info}}"
+
+- name: Saving space information
+  set_fact:
+    free_space: "{{bootflash | ios_check_free_space}}"
+
+- name: Check if device has enough free memory
+  assert:
+    that: "{{free_space}} > {{ios_size/1000/1000}}"
+    fail_msg: "Fail - Not enough space available for new image"
+    success_msg: "Pass - enough space available for new image"

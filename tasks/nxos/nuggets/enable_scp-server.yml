@@ -1,0 +1,9 @@
+- name: Enable feature scp-server
+  nxos_config:
+    lines: feature scp-server
+    save_when: always
+
+- name: Set window size
+  nxos_config:
+    lines: ip tcp path-mtu-discovery
+  save_when: always

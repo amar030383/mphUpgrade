@@ -1,0 +1,4 @@
+- set_fact:
+      time_stamp: "{{lookup('pipe', 'date +%Y-%m-%d')}}"
+- debug:
+    msg: "{{time_stamp}}"

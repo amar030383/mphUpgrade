@@ -1,0 +1,2 @@
+- name: sh_int_status check
+  include_tasks: tasks/nxos/nexus_pre_post_check_commands/nexus_sh_int_status_check.yml

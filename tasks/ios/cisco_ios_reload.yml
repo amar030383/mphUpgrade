@@ -1,0 +1,15 @@
+- name: reboot ios device
+  cli_command:
+    command: reload
+    prompt:
+      - Save?
+      - confirm
+    answer:
+      - y
+      - y
+  register: reload_output
+
+- name: Print the console output during reload
+  debug:
+    var: item
+  with_items: "{{ reload_output.stdout_lines }}"

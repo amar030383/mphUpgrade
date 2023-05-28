@@ -1,0 +1,14 @@
+- name: Save running config 
+  ios_config:
+    save_when: always 
+  register: resp
+
+- name: Registering save config
+  set_fact:
+    config_saved: True
+  when: resp.changed == true
+
+- name: Registering save config
+  set_fact:
+    config_saved: False
+  when: resp.changed == false

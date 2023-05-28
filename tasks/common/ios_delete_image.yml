@@ -1,0 +1,7 @@
+- name: Delete unused images
+  ios_command:
+    commands: "delete /force /recursive bootflash:/{{item}}"
+  with_items: "{{deleted_images}}"
+  register: delete_images
+  ignore_errors: True
+  tags: never

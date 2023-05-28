@@ -1,0 +1,12 @@
+- name: Get_output cisco_ios_sh_ip_int_bri_check diff
+  set_fact:
+    cisco_ios_sh_ip_int_bri_pre_post: "{{fil_cisco_ios_sh_ip_int_bri_check_pre | output_comparator (fil_cisco_ios_sh_ip_int_bri_check_post)}}"
+  when: fil_cisco_ios_sh_ip_int_bri_check_pre is defined
+
+- name: Get_output cisco_ios_sh_int_desc_check diff
+  set_fact:
+    cisco_ios_sh_int_desc_pre_post: "{{fil_cisco_ios_sh_int_desc_check_pre | output_comparator (fil_cisco_ios_sh_int_desc_check_post)}}"
+  when: fil_cisco_ios_sh_int_desc_check_pre is defined
+
+- debug: 
+    msg: "Comparision output {{cisco_ios_sh_ip_int_bri_pre_post}}:{{cisco_ios_sh_int_desc_pre_post}}"

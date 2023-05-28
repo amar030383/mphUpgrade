@@ -1,0 +1,13 @@
+- debug:
+    msg: 'Working on {{item.image_name}} : {{item.image_md5}}'
+
+- name: Check if the image is already present on the device
+  include_tasks: tasks/nxos/nuggets/nexus_check_images.yml
+
+- name: 'Verify MD5 value of {{item.image_name}}'
+  include_tasks: tasks/nxos/nuggets/nexus_md5_check.yml
+  when: image_available == 'Image Found'
+
+- name: Nexus copy module
+  include_tasks: tasks/nxos/nuggets/copy_Nexus.yml
+  when: image_available != 'Image Found' or verify_md5 == 'Failed'

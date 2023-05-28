@@ -1,0 +1,21 @@
+- name: Gather required information from the device
+  nxos_facts:
+    gather_subset:
+      - all
+      - '!config'
+      - '!interfaces'
+    
+- name: Set Device Model
+  set_fact:
+    ansible_model: "{{ansible_net_platform | lower}}"
+  
+- name: Checking and setting device model
+  set_fact:
+    device_model: "{{ansible_model | device_model}}"
+
+- name: Checking Nexus series 
+  set_fact:
+    nexus_series: "{{ansible_model | check_nexus_series}}"
+
+- name: Load device specific variables
+  include_vars: "vars/{{ansible_model}}.yml"

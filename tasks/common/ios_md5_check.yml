@@ -1,0 +1,14 @@
+- name: "Check MD5 value of {{ios_image}}"
+  ios_command:
+    commands: "verify /md5 {{ios_image}} {{ios_md5}}"
+  register: verify_md5
+  ignore_errors: True
+
+- name: Check if MD5 is correct
+  assert:
+    that:
+      - not verify_md5.failed
+      - verify_md5.stdout is defined
+      - "'Verified' in verify_md5.stdout[0]"
+    fail_msg: Software image validation is Failed
+    success_msg: Software image validation is successful

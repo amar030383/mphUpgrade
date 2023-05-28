@@ -1,0 +1,10 @@
+- name: "Check all .bin files"
+  ios_command:
+    commands: "dir | in bin"
+  register: unused_images
+  ignore_errors: True
+
+- set_fact:
+    deleted_images: "{{ ansible_net_image | delete_images(ios_image, unused_images.stdout_lines[0] | to_yaml )}}"
+
+
