@@ -1,4 +1,4 @@
-from deepdiff import DeepDiff
+# from deepdiff import DeepDiff
 import re
 def filter_sh_cdp_nei_check(input):
     print ('In CDP nei')

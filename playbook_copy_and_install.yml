@@ -13,10 +13,17 @@
       ios_facts:
         gather_subset:
           - all
+      register: facts
+
+    - set_fact: 
+        ansible_facts: "{{facts.ansible_facts}}"
+
+    - debug:
+        msg: "{{ansible_facts}}"
           
     - name: Saving Device Model
       set_fact:
-        device: "{{ ansible_facts.net_model | lower }}"
+        device: "{{ ansible_facts.ansible_net_model | lower }}"
 
     - name: Checking Device Type
       set_fact:
@@ -26,7 +33,7 @@
 
     - name: Identifying the model facts
       set_fact:
-        device: "{{ ansible_facts.net_model | lower }}"
+        device: "{{ ansible_facts.ansible_net_model | lower }}"
     
     - name: Load device variables
       include_vars: vars/{{device}}.yml
@@ -36,7 +43,7 @@
 
     - name: Saving Bootflash information
       set_fact:
-        bootflash: "{{ansible_facts.net_filesystems_info}}"
+        bootflash: "{{ansible_facts.ansible_net_filesystems_info}}"
 
     - name: Saving space information
       set_fact:
