@@ -5,8 +5,24 @@
   become: yes
 
   tasks:
-    - name: IOS Gather facts
-      include_tasks: tasks/ios/cisco_ios_gather_facts.yml
+##########################################################################
+    # - name: IOS Gather facts
+    #   include_tasks: tasks/ios/cisco_ios_gather_facts.yml
+
+    - name: Gather default facts
+      ios_facts:
+        gather_subset:
+          - all
+          
+    - name: Saving Device Model
+      set_fact:
+        device: "{{ ansible_facts.net_model | lower }}"
+
+    - name: Checking Device Type
+      set_fact:
+        device_model: "{{device | device_model }}"
+
+##########################################################################
 
     - name: Identifying the model facts
       set_fact:
@@ -14,12 +30,45 @@
     
     - name: Load device variables
       include_vars: vars/{{device}}.yml
+##########################################################################
+    # - name: Check Free Space
+    #   include_tasks: tasks/ios/cisco_ios_check_free_space.yml
 
-    - name: Check Free Space
-      include_tasks: tasks/ios/cisco_ios_check_free_space.yml
+    - name: Saving Bootflash information
+      set_fact:
+        bootflash: "{{ansible_facts.net_filesystems_info}}"
 
-    - name: 'Copy software image'
-      include_tasks: tasks/common/cisco_image_status.yml
+    - name: Saving space information
+      set_fact:
+        free_space: "{{bootflash | ios_check_free_space}}"
+
+    - name: Check if device has enough free memory
+      assert:
+        that: "{{free_space}} > {{ios_size/1000/1000}}"
+        fail_msg: "Fail - Not enough space available for new image"
+        success_msg: "Pass - enough space available for new image"
+
+##########################################################################
+    # - name: 'Copy software image'
+    #   include_tasks: tasks/common/cisco_image_status.yml
+
+    - name: Validate the current image on {{inventory_hostname}}
+      include_tasks: tasks/ios/cisco_ios_check_currentboot.yml
+
+    - name: Block for image upload and MD5
+      block:
+        - name: Check all software images on {{inventory_hostname}}
+          include_tasks: tasks/ios/cisco_ios_check_images.yml
+
+        - name: Upload software image on {{inventory_hostname}}
+          include_tasks: tasks/common/copy_image_ios.yml
+          when: ios_image not in all_images
+
+        - name: Validate if MD5 value of image matches on {{inventory_hostname}}
+          include_tasks: tasks/common/ios_md5_check.yml
+          when: ios_image in all_images 
+      when: ios_image != current_image
+##########################################################################
 
     - name: Initiate Pre Check
       include_tasks: tasks/common/ios_pre_post_check.yml
